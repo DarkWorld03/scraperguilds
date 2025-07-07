@@ -13,8 +13,8 @@ app.get("/ejecutar-scraper", async (req, res) => {
     const content = JSON.stringify(data, null, 2);
 
     const subida = await subirAGithub({
-      repo: "darkworldaxie/guild-data", // Cambia por tu repo correcto
-      path: `guilds/${filename}`, // Carpeta donde guardarás el JSON
+      repo: "DarkWorld03/guild-data", // ✅ Repo correcto
+      path: `guilds/${filename}`,
       content,
       message: "📦 Actualización automática de allguilds.json",
       token: process.env.GITHUB_TOKEN,
@@ -29,3 +29,4 @@ app.get("/ejecutar-scraper", async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`✅ Servidor activo en puerto ${PORT}`));
+
