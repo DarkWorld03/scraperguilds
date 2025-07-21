@@ -4,36 +4,39 @@ const subirAGithub = require("./subirAGithub");
 
 const app = express();
 
-// Ping
 app.get("/ping", (req, res) => {
   res.send("🏓 Ping recibido (scraperAllGuilds)");
 });
 
-// Scraper
-app.get("/ejecutar-scraper", async (req, res) => {
-  try {
-    const data = await scrapeAllGuilds();
-    if (!data || data.length === 0) throw new Error("No se pudo scrapear.");
+app.get("/ejecutar-scraper", (req, res) => {
+  res.send("⏳ Scraper iniciado en segundo plano (scraperAllGuilds)");
 
-    const filename = "allguilds.json";
-    const content = JSON.stringify(data, null, 2);
+  setTimeout(async () => {
+    try {
+      const data = await scrapeAllGuilds();
+      if (!data || data.length === 0) throw new Error("No se pudo scrapear.");
 
-    const subida = await subirAGithub({
-      repo: "DarkWorld03/guild-data",
-      path: `guilds/${filename}`,
-      content,
-      message: "📦 Actualización automática de allguilds.json",
-      token: process.env.GITHUB_TOKEN,
-    });
+      const filename = "allguilds.json";
+      const content = JSON.stringify(data, null, 2);
 
-    console.log("✅ Archivo subido:", subida);
-    res.send("✅ JSON generado y subido a GitHub");
-  } catch (err) {
-    console.error("❌ Error al ejecutar scraperAllGuilds:", err);
-    res.status(500).send("❌ Error general");
-  }
+      const subida = await subirAGithub({
+        repo: "DarkWorld03/guild-data",
+        path: `guilds/${filename}`,
+        content,
+        message: "📦 Actualización automática de allguilds.json",
+        token: process.env.GITHUB_TOKEN,
+      });
+
+      console.log("✅ Archivo subido:", subida);
+    } catch (err) {
+      console.error("❌ Error en scraperAllGuilds:", err);
+    }
+  }, 100);
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`✅ Servidor activo scraperAllGuilds en puerto ${PORT}`));
+app.listen(PORT, () =>
+  console.log(`✅ Servidor activo scraperAllGuilds en puerto ${PORT}`)
+);
+
 
